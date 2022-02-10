@@ -42,5 +42,5 @@ task Publish -Jobs Install, {
 
 	assert ( $Configuration -eq 'Release' )
 
-	Publish-Module -Name PsSqlClient -NuGetApiKey $NuGetApiKey
+	Publish-Module -Name PsCosmos -NuGetApiKey $NuGetApiKey
 }
