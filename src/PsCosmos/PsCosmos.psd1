@@ -1,6 +1,6 @@
 @{
     RootModule = 'PsCosmos.dll'
-    ModuleVersion = '0.1'
+    ModuleVersion = '0.1.0'
 
     # Unterstützte PSEditions
     # CompatiblePSEditions = @()
