@@ -16,7 +16,7 @@ task Build -Jobs {
 }, SetPrerelease
 
 task SetPrerelease -If $BuildNumber {
-	$Global:PreRelease = "alpha$BuildNumber"
+	$Global:PreRelease = "alpha$( '{0:d4}' -f $BuildNumber )"
 	Update-ModuleManifest -Path $Global:Manifest -Prerelease $Global:PreRelease
 }
 
