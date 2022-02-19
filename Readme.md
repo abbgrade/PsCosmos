@@ -26,6 +26,19 @@ Invoke-Build Install
 
 - Added commands to connect, disconnect and query cosmos db.
 
+## Development
+
+### Versioning
+
+- This is a [Portable Module](https://docs.microsoft.com/de-de/powershell/scripting/dev-cross-plat/writing-portable-modules?view=powershell-7) based on [PowerShell Standard](https://github.com/powershell/powershellstandard) and [.NET Standard](https://docs.microsoft.com/en-us/dotnet/standard/net-standard).
+- [VSCode](https://code.visualstudio.com) is recommended as IDE. [VSCode Tasks](https://code.visualstudio.com/docs/editor/tasks) are configured.
+- Build automation is based on [InvokeBuild](https://github.com/nightroman/Invoke-Build)
+- Test automation is based on [Pester](https://pester.dev)
+- Documentation is based on [platyPs](https://github.com/PowerShell/platyPS)
+- Commands are named based on [Approved Verbs for PowerShell Commands](https://docs.microsoft.com/de-de/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands)
+- This project uses [gitflow](https://github.com/nvie/gitflow).
+- This modules uses [Semantic Versioning 1.0.0](https://semver.org/spec/v1.0.0.html)
+
 ### Release
 
 1. Create release branch using gitflow.
