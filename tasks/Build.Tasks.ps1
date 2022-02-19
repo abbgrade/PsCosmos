@@ -51,8 +51,6 @@ task Install -Jobs Build, {
 
 # Synopsis: Publish the module to PSGallery.
 task Publish -Jobs Build, {
-
 	assert ( $Configuration -eq 'Release' )
-
 	Publish-Module -Path $Global:Manifest.Directory -NuGetApiKey $NuGetApiKey -Force:$ForcePublish
 }
