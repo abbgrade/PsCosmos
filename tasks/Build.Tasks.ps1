@@ -52,7 +52,7 @@ task Install -Jobs Build, {
 task Publish -Jobs Build, {
 	if ( -Not $Global:PreRelease ) {
 		assert ( $Configuration -eq 'Release' )
-		Update-ModuleManifest -Path $Global:Manifest -Prerelease $null
+		Update-ModuleManifest -Path $Global:Manifest -Prerelease ''
 	}
 	Publish-Module -Path $Global:Manifest.Directory -NuGetApiKey $NuGetApiKey -Force:$ForcePublish
 }
