@@ -9,41 +9,53 @@ requires ModuleName
 [System.IO.DirectoryInfo] $BinaryDirectory = "$ModuleSourceDirectory/bin"
 [System.IO.DirectoryInfo] $ObjectDirectory = "$ModuleSourceDirectory/obj"
 
-# Synopsis: Build project.
-task Build -Jobs {
-	exec { dotnet publish $ModuleSourceDirectory -c $Configuration -o $ModulePublishDirectory }
-	$Global:Manifest = Get-Item $ModulePublishDirectory/$ModuleName.psd1
-}, SetPrerelease
-
+# Synopsis: Set the prerelease in the manifest based on the build number.
 task SetPrerelease -If $BuildNumber {
 	$Global:PreRelease = "alpha$( '{0:d4}' -f $BuildNumber )"
 	Update-ModuleManifest -Path $Global:Manifest -Prerelease $Global:PreRelease
 }
 
-# Synopsis: Remove files.
+# Synopsis: Build the dll with the module commands.
+task Build.Dll -Jobs {
+	exec { dotnet publish $ModuleSourceDirectory -c $Configuration -o $ModulePublishDirectory }
+	$Global:Manifest = Get-Item $ModulePublishDirectory/$ModuleName.psd1
+}, SetPrerelease
+
+# Synopsis: Import the module.
+task Import -Jobs Build.Dll, {
+    Import-Module $Global:Manifest
+}
+
+# Synopsis: Initialize the documentation.
+task Doc.Init -If { -Not $DocumentationDirectory.Exists } -Jobs Import, {
+	New-Item $DocumentationDirectory -ItemType Directory
+    New-MarkdownHelp -Module $ModuleName -OutputFolder $DocumentationDirectory -ErrorAction Stop
+}
+
+# Synopsis: Update the markdown documentation.
+task Doc.Update -Jobs Import, Doc.Init, {
+    Update-MarkdownHelp -Path $DocumentationDirectory
+}
+
+# Synopsis: Build the XML help based on the markdown documentation.
+task Build.Help -Jobs Doc.Update, {
+    New-ExternalHelp -Path $DocumentationDirectory -OutputPath $ModulePublishDirectory\en-US\ -Force
+}
+
+# Synopsis: Build the module.
+task Build -Job Build.Dll, Build.Help
+
+# Synopsis: Remove all temporary files.
 task Clean {
 	remove $BinaryDirectory, $ObjectDirectory, $PublishDirectory
-}
-
-task Import -Jobs Build, {
-	Import-Module $Global:Manifest
-}
-
-task Docs -Jobs Import, {
-	if ( Test-Path $DocumentationDirectory -PathType Container ) {
-		Update-MarkdownHelp $DocumentationDirectory
-	} else {
-		New-MarkdownHelp -Module $ModuleName -OutputFolder $DocumentationDirectory
-	}
 }
 
 # Synopsis: Install the module.
 task Install -Jobs Build, {
 	$info = Import-PowerShellDataFile $Global:Manifest
 	$version = ([System.Version] $info.ModuleVersion)
-	$name = $Global:Manifest.BaseName
 	$defaultModulePath = $env:PsModulePath -split ';' | Select-Object -First 1
-	$installPath = Join-Path $defaultModulePath $name $version.ToString()
+	$installPath = Join-Path $defaultModulePath $ModuleName $version.ToString()
 	New-Item -Type Directory $installPath -Force | Out-Null
 	Get-ChildItem $Global:Manifest.Directory | Copy-Item -Destination $installPath -Recurse -Force
 }
