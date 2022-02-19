@@ -22,23 +22,22 @@ jobs:
       - name: Upload build
         uses: actions/upload-artifact@v2
         with:
-          path: src/PsCosmos/bin/Debug/net5.0/publish
+          name: build
+          path: src/PsCosmos/bin/Release/net5.0/publish
 
   release:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download build artifact
-        uses: aochmann/actions-download-artifact@1.0.4
+        uses: actions/download-artifact@v2
         with:
-          repo: ${{github.repository}}
-          name: artifact
-          path: publish/
+          name: build
 
       - name: Publish to PsGallery
         shell: pwsh
         run: |
-          $Manifest = Get-Item publish/PsCosmos.psd1
+          $Manifest = Get-Item PsCosmos.psd1
           $ModuleName = $Manifest.BaseName
           $Info = Import-PowerShellDataFile $Manifest
           Publish-Module -Name $ModuleName -NuGetApiKey ${{ secrets.PS_GALLERY_KEY }}
