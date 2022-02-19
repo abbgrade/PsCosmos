@@ -9,16 +9,15 @@ requires ModuleName
 [System.IO.DirectoryInfo] $BinaryDirectory = "$ModuleSourceDirectory/bin"
 [System.IO.DirectoryInfo] $ObjectDirectory = "$ModuleSourceDirectory/obj"
 
-
 # Synopsis: Build project.
 task Build -Jobs {
-	exec { dotnet publish $PSScriptRoot/../src/$ModuleName -c $Configuration -o $ModulePublishDirectory }
+	exec { dotnet publish $ModuleSourceDirectory -c $Configuration -o $ModulePublishDirectory }
 	$Global:Manifest = Get-Item $ModulePublishDirectory/$ModuleName.psd1
-}, UpdateVersion
+}, SetPrerelease
 
-task UpdateVersion -If $BuildNumber {
-	Update-ModuleManifest -Path $Global:Manifest -Prerelease "alpha$BuildNumber"
-	# ( Get-Content -Path $Global:Manifest ) -replace '''alpha''', "'alpha.$BuildNumber'" | Set-Content -Path $Global:Manifest 
+task SetPrerelease -If $BuildNumber {
+	$Global:PreRelease = "alpha$BuildNumber"
+	Update-ModuleManifest -Path $Global:Manifest -Prerelease $Global:PreRelease
 }
 
 # Synopsis: Remove files.
@@ -40,17 +39,20 @@ task Docs -Jobs Import, {
 
 # Synopsis: Install the module.
 task Install -Jobs Build, {
-    $info = Import-PowerShellDataFile $Global:Manifest
-    $version = ([System.Version] $info.ModuleVersion)
-    $name = $Global:Manifest.BaseName
-    $defaultModulePath = $env:PsModulePath -split ';' | Select-Object -First 1
-    $installPath = Join-Path $defaultModulePath $name $version.ToString()
-    New-Item -Type Directory $installPath -Force | Out-Null
-    Get-ChildItem $Global:Manifest.Directory | Copy-Item -Destination $installPath -Recurse -Force
+	$info = Import-PowerShellDataFile $Global:Manifest
+	$version = ([System.Version] $info.ModuleVersion)
+	$name = $Global:Manifest.BaseName
+	$defaultModulePath = $env:PsModulePath -split ';' | Select-Object -First 1
+	$installPath = Join-Path $defaultModulePath $name $version.ToString()
+	New-Item -Type Directory $installPath -Force | Out-Null
+	Get-ChildItem $Global:Manifest.Directory | Copy-Item -Destination $installPath -Recurse -Force
 }
 
 # Synopsis: Publish the module to PSGallery.
 task Publish -Jobs Build, {
-	assert ( $Configuration -eq 'Release' )
+	if ( -Not $Global:PreRelease ) {
+		assert ( $Configuration -eq 'Release' )
+		Update-ModuleManifest -Path $Global:Manifest -Prerelease $null
+	}
 	Publish-Module -Path $Global:Manifest.Directory -NuGetApiKey $NuGetApiKey -Force:$ForcePublish
 }
