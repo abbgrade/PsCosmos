@@ -39,6 +39,5 @@ jobs:
         shell: pwsh
         run: |
           $Manifest = Get-Item PsCosmos.psd1
-          $ModuleName = $Manifest.BaseName
           $Info = Import-PowerShellDataFile $Manifest
-          Publish-Module -Name $ModuleName -NuGetApiKey ${{ secrets.PS_GALLERY_KEY }}
+          Publish-Module -Path $Manifest -NuGetApiKey ${{ secrets.PS_GALLERY_KEY }}
