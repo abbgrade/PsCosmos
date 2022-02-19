@@ -40,10 +40,10 @@
     },
     "tasks": [
         {
-            "label": "build",
+            "label": "Build",
             "group": "build",
             "type": "shell",
-            "command": "Invoke-Build -Task build",
+            "command": "Invoke-Build -Task Build",
             "problemMatcher": "$msCompile",
             "presentation": {
                 "echo": false,
@@ -51,9 +51,9 @@
             }
         },
         {
-            "label": "clean",
+            "label": "Clean",
             "type": "shell",
-            "command": "Invoke-Build -Task clean",
+            "command": "Invoke-Build -Task Clean",
             "problemMatcher": "$msCompile",
             "presentation": {
                 "echo": false,
@@ -61,7 +61,7 @@
             }
         },
         {
-            "label": "test",
+            "label": "Test",
             "group": "test",
             "type": "shell",
             "command": "Invoke-Pester",
@@ -73,13 +73,13 @@
                 "echo": false,
                 "showReuseMessage": false
             },
-            "dependsOn": "build"
+            "dependsOn": "Build"
         },
         {
-            "label": "install",
+            "label": "Install",
             "type": "shell",
             "command": "Invoke-Build",
-            "args": ["install", "-Configuration", "Release"],
+            "args": ["Install", "-Configuration", "Release"],
             "problemMatcher": "$msCompile",
             "presentation": {
                 "echo": false,
