@@ -11,6 +11,7 @@ task Build {
 task UpdateVersion -If $BuildNumber {
 	$info = Import-PowerShellDataFile $global:Manifest
 	$info.PrivateData.PSData.Prerelease = "alpha-$BuildNumber"
+	Update-ModuleManifest $global:Manifest -PrivateData $info.PrivateData
 }
 
 # Synopsis: Remove files.
