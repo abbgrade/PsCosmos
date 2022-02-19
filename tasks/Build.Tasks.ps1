@@ -6,6 +6,11 @@ requires Configuration
 # Synopsis: Build project.
 task Build {
 	exec { dotnet publish ./src/PsCosmos -c $Configuration }
+}, UpdateVersion
+
+task UpdateVersion -If $BuildNumber {
+	$info = Import-PowerShellDataFile $global:Manifest
+	$info.PrivateData.PSData.Prerelease = "alpha-$BuildNumber"
 }
 
 # Synopsis: Remove files.

@@ -9,7 +9,11 @@ param(
 
 	[string] $NuGetApiKey = $env:nuget_apikey,
 
-	[switch] $ForcePublish
+	# Overwrite published versions
+	[switch] $ForcePublish,
+
+	# Version suffix to prereleases
+	[int] $BuildNumber
 )
 
 . $PSScriptRoot\tasks\Build.Tasks.ps1
