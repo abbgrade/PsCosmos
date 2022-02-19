@@ -16,4 +16,6 @@ param(
 	[int] $BuildNumber
 )
 
+$ModuleName = 'PsCosmos'
+
 . $PSScriptRoot\tasks\Build.Tasks.ps1

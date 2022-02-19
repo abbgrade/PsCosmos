@@ -1,52 +1,58 @@
 requires Configuration
+requires ModuleName
 
-[System.IO.FileInfo] $global:Manifest = "$PSScriptRoot/../src/PsCosmos/bin/$Configuration/net5.0/publish/PsCosmos.psd1"
+[System.IO.DirectoryInfo] $PublishDirectory = "$PSScriptRoot/../publish"
+[System.IO.DirectoryInfo] $SourceDirectory = "$PSScriptRoot/../src"
+[System.IO.DirectoryInfo] $DocumentationDirectory = "$PSScriptRoot/../docs"
+[System.IO.DirectoryInfo] $ModulePublishDirectory = "$PublishDirectory/$ModuleName"
+[System.IO.DirectoryInfo] $ModuleSourceDirectory = "$SourceDirectory/$ModuleName"
+[System.IO.DirectoryInfo] $BinaryDirectory = "$ModuleSourceDirectory/bin"
+[System.IO.DirectoryInfo] $ObjectDirectory = "$ModuleSourceDirectory/obj"
 
 
 # Synopsis: Build project.
-task Build {
-	exec { dotnet publish ./src/PsCosmos -c $Configuration }
+task Build -Jobs {
+	exec { dotnet publish $PSScriptRoot/../src/$ModuleName -c $Configuration -o $ModulePublishDirectory }
+	$Global:Manifest = Get-Item $ModulePublishDirectory/$ModuleName.psd1
 }, UpdateVersion
 
 task UpdateVersion -If $BuildNumber {
-	$info = Import-PowerShellDataFile $global:Manifest
-	$info.PrivateData.PSData.Prerelease = "alpha-$BuildNumber"
-	Update-ModuleManifest $global:Manifest -PrivateData $info.PrivateData
+	Update-ModuleManifest -Path $Global:Manifest -Prerelease "alpha$BuildNumber"
+	# ( Get-Content -Path $Global:Manifest ) -replace '''alpha''', "'alpha.$BuildNumber'" | Set-Content -Path $Global:Manifest 
 }
 
 # Synopsis: Remove files.
 task Clean {
-	remove src/PsCosmos/bin, src/PsCosmos/obj
+	remove $BinaryDirectory, $ObjectDirectory, $PublishDirectory
 }
 
 task Import -Jobs Build, {
-	Import-Module $global:Manifest
+	Import-Module $Global:Manifest
 }
 
 task Docs -Jobs Import, {
-
-	if ( Test-Path ./docs -PathType Container ) {
-		Update-MarkdownHelp ./docs
+	if ( Test-Path $DocumentationDirectory -PathType Container ) {
+		Update-MarkdownHelp $DocumentationDirectory
 	} else {
-		New-MarkdownHelp -Module PsCosmos -OutputFolder ./docs
+		New-MarkdownHelp -Module $ModuleName -OutputFolder $DocumentationDirectory
 	}
 }
 
 # Synopsis: Install the module.
 task Install -Jobs Build, {
-    $info = Import-PowerShellDataFile $global:Manifest.FullName
+    $info = Import-PowerShellDataFile $Global:Manifest
     $version = ([System.Version] $info.ModuleVersion)
-    $name = $global:Manifest.BaseName
+    $name = $Global:Manifest.BaseName
     $defaultModulePath = $env:PsModulePath -split ';' | Select-Object -First 1
     $installPath = Join-Path $defaultModulePath $name $version.ToString()
     New-Item -Type Directory $installPath -Force | Out-Null
-    Get-ChildItem $global:Manifest.Directory | Copy-Item -Destination $installPath -Recurse -Force
+    Get-ChildItem $Global:Manifest.Directory | Copy-Item -Destination $installPath -Recurse -Force
 }
 
 # Synopsis: Publish the module to PSGallery.
-task Publish -Jobs Install, {
+task Publish -Jobs Build, {
 
 	assert ( $Configuration -eq 'Release' )
 
-	Publish-Module -Name PsCosmos -NuGetApiKey $NuGetApiKey -Force:$ForcePublish
+	Publish-Module -Path $Global:Manifest.Directory -NuGetApiKey $NuGetApiKey -Force:$ForcePublish
 }
