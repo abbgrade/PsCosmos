@@ -34,10 +34,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
+          path: PsCosmos
 
       - name: Publish to PsGallery
         shell: pwsh
         run: |
-          $Manifest = Get-Item PsCosmos.psd1
-          $Info = Import-PowerShellDataFile $Manifest
-          Publish-Module -Path $Manifest -NuGetApiKey ${{ secrets.PS_GALLERY_KEY }}
+          Publish-Module -Path ./PsCosmos -NuGetApiKey ${{ secrets.PS_GALLERY_KEY }}
