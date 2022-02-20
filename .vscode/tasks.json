@@ -65,6 +65,7 @@
             "group": "test",
             "type": "shell",
             "command": "Invoke-Pester",
+            "args": ["-Output", "Detailed"],
             "options": {
                 "cwd": "test"
             },

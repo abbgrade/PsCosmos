@@ -45,9 +45,12 @@ You can build the module using the VS Code build task or with the command `Invok
 
 ### Release
 
-1. Create release branch using gitflow.
-2. Update version number in psd1 file.
-3. Update changelog in this readme file.
-4. Uninstall old versions.
-5. publish release using `Invoke-Build Publish -Configuration Release`.
-6. finish release using gitflow.
+1. Create a release branch using gitflow.
+2. Update the version number in the module manifest.
+3. Extend the changelog in this readme.
+4. If you want to create a prerelease.
+   1. Push the release branch to github, to publish the prerelease to PsGallery.
+5. Finish release using gitflow.
+6. Check if tags are not pushed to github.
+7. Check if the release branch is deleted on github.
+8. Create the release on github.
