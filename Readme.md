@@ -24,7 +24,11 @@ Invoke-Build Install
 
 ### 0.1.0
 
-- Added commands to connect, disconnect and query cosmos db.
+- Added commands to connect, disconnect and query Cosmos DB.
+
+### 0.2.0
+
+- Added help / documentation to the commands.
 
 ## Development
 
