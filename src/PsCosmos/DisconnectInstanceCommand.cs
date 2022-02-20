@@ -5,6 +5,7 @@ using Microsoft.Azure.Cosmos;
 namespace PsCosmos
 {
     [Cmdlet(VerbsCommunications.Disconnect, "Instance")]
+    [OutputType(typeof(void))]
     public class DisconnectInstanceCommand : PSCmdlet
     {
 
@@ -16,6 +17,9 @@ namespace PsCosmos
 
         protected override void ProcessRecord()
         {
+            if ( Client.Equals(ConnectInstanceCommand.SessionClient)) {
+                ConnectInstanceCommand.SessionClient = null;
+            }
             Client.Dispose();
         }
 
