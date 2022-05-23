@@ -20,15 +20,6 @@ Alternatively it can be build and installed from source.
 Invoke-Build Install
 ```
 
-## Changelog
-
-### 0.1.0
-
-- Added commands to connect, disconnect and query Cosmos DB.
-
-### 0.2.0
-
-- Added help / documentation to the commands.
 
 ## Development
 

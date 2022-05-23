@@ -7,4 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0]
+
+### Added
+
+- Added commands to connect, disconnect and query Cosmos DB.
+
+## [0.2.0]
+
+### Added
+
+- Added help / documentation to the commands.
+
 <!-- markdownlint-configure-file {"MD024": { "siblings_only": true } } -->
