@@ -12,7 +12,7 @@
     RootModule = 'PsCosmos.dll'
     
     # Version number of this module.
-    ModuleVersion = '0.2.0'
+    ModuleVersion = '0.3.0'
     
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -33,7 +33,7 @@
     Description = 'The PowerShell Cosmos module provides access to Cosmos SQL.'
     
     # Minimum version of the PowerShell engine required by this module
-    PowerShellVersion = '7.0'
+    PowerShellVersion = '7.4'
     
     # Name of the PowerShell host required by this module
     # PowerShellHostName = ''
@@ -129,5 +129,3 @@
     DefaultCommandPrefix = 'CSql'
     
     }
-    
-    
