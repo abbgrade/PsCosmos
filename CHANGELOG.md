@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Updated to net8.0.
+- Updated System.Management.Automation 7.4.0.
+- Microsoft.Azure.Cosmos 3.56.0.
+
 ## [0.2.0] - 2022-02-20
 
 ### Added
